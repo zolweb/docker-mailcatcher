@@ -1,19 +1,14 @@
-FROM debian:jessie
+FROM ruby:2.7.2-alpine3.12
 
-MAINTAINER ZOL <hello@zol.fr>
+LABEL maintainer="Zol <hello@zol.fr>"
 
-RUN apt-get update \
-  && DEBIAN_FRONTEND=noninteractive apt-get install -q -y \
-    libsqlite3-dev \
-    ruby \
-    ruby-dev \
-    build-essential \
-  && gem install --no-ri --no-rdoc mailcatcher \
-  && apt-get remove -y build-essential \
-  && apt-get autoremove -y \
-  && apt-get clean \
-  && rm -rf /var/lib/apt/lists
+RUN set -xe \
+    && apk add --no-cache libstdc++ sqlite-libs \
+    && apk add --no-cache --virtual .build-deps build-base sqlite-dev \
+    && gem install mailcatcher -v 0.7.1 -N \
+    && apk del .build-deps
 
 EXPOSE 1080 1025
 
-ENTRYPOINT ["mailcatcher", "--smtp-ip=0.0.0.0", "--http-ip=0.0.0.0", "--foreground"]
+ENTRYPOINT ["mailcatcher", "--no-quit", "--smtp-ip=0.0.0.0", "--http-ip=0.0.0.0", "--foreground"]
+
