@@ -1,11 +1,11 @@
-FROM ruby:2.7.2-alpine3.12
+FROM ruby:2.7.4-alpine3.14
 
 LABEL maintainer="Zol <hello@zol.fr>"
 
 RUN set -xe \
     && apk add --no-cache libstdc++ sqlite-libs \
     && apk add --no-cache --virtual .build-deps build-base sqlite-dev \
-    && gem install mailcatcher -v 0.7.1 -N \
+    && gem install mailcatcher -v 0.8.1 -N \
     && apk del .build-deps
 
 EXPOSE 1080 1025
